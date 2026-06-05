@@ -77,6 +77,13 @@ fun AddTransactionScreen(
     }
 
     LaunchedEffect(Unit) {
+        while (true) {
+            viewModel.commands.receive()
+            snackbarHostState.showSnackbar("Операция успешно добавлена!")
+        }
+    }
+
+    LaunchedEffect(Unit) {
         viewModel.error.collect { error ->
             if (error != null) {
                 errorMessage = error
@@ -88,7 +95,6 @@ fun AddTransactionScreen(
     LaunchedEffect(showSnackbar) {
         if (showSnackbar) {
             coroutineScope.launch {
-                snackbarHostState.showSnackbar("Операция успешно добавлена!")
                 showSnackbar = false
             }
         }
@@ -297,7 +303,7 @@ fun DatePickerDialog(
 ) {
     val datePickerState = rememberDatePickerState()
 
-    androidx.compose.material3.DatePickerDialog(
+    DatePickerDialog(
         onDismissRequest = onDismissRequest,
         confirmButton = {
             TextButton(

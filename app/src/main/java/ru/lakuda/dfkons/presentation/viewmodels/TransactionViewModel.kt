@@ -2,6 +2,7 @@ package ru.lakuda.dfkons.presentation.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -23,6 +24,8 @@ class TransactionViewModel(
 
     private val _addResult = MutableStateFlow<AddTransactionResult?>(null)
     val addResult = _addResult.asStateFlow()
+
+    val commands = Channel<Any>()
 
     private val _deleteResult = MutableStateFlow<DeleteTransactionResult?>(null)
 
@@ -56,6 +59,7 @@ class TransactionViewModel(
             )
 
             _addResult.value = result
+            commands.send(Any())
             _isLoading.value = false
         }
     }

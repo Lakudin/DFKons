@@ -31,16 +31,16 @@ import ru.lakuda.dfkons.presentation.viewmodels.StatisticsViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 
-@Composable
-fun adaptiveSp(fontSize: Int): TextUnit {
-    val configuration = LocalConfiguration.current
-    val screenWidthDp = configuration.screenWidthDp
-    return when {
-        screenWidthDp < 360 -> (fontSize - 4).sp
-        screenWidthDp < 400 -> (fontSize - 2).sp
-        else -> fontSize.sp
-    }
-}
+//@Composable
+//fun adaptiveSp(fontSize: Int): TextUnit {
+//    val configuration = LocalConfiguration.current
+//    val screenWidthDp = configuration.screenWidthDp
+//    return when {
+//        screenWidthDp < 360 -> (fontSize - 4).sp
+//        screenWidthDp < 400 -> (fontSize - 2).sp
+//        else -> fontSize.sp
+//    }
+//}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -138,27 +138,27 @@ fun StatisticsScreen(
 
     if (showStartPicker) {
         DatePickerDialog(
-            onDismissRequest = { showStartPicker = false },
+            onDismissRequest = { /*showStartPicker = false*/ },
             onDateSelected = { date ->
                 startDateMillis = date.time
-                showStartPicker = false
+                //showStartPicker = false
             }
         )
     }
 
     if (showEndPicker) {
         DatePickerDialog(
-            onDismissRequest = { showEndPicker = false },
+            onDismissRequest = { /*showEndPicker = false*/ },
             onDateSelected = { date ->
                 endDateMillis = date.time
-                showEndPicker = false
+                //showEndPicker = false
             }
         )
     }
 
     if (showDeleteDialog && selectedTransaction != null) {
         AlertDialog(
-            onDismissRequest = { showDeleteDialog = false },
+            onDismissRequest = { /*showDeleteDialog = false*/ },
             title = { Text("Удалить операцию") },
             text = {
                 Text(
@@ -177,7 +177,7 @@ fun StatisticsScreen(
                             snackbarMessage = "Операция удалена"
                             showSnackbar = true
                         }
-                        showDeleteDialog = false
+                        //showDeleteDialog = false
                         selectedTransactionId = null
                     }
                 ) {
@@ -185,7 +185,7 @@ fun StatisticsScreen(
                 }
             },
             dismissButton = {
-                TextButton(onClick = { showDeleteDialog = false }) {
+                TextButton(onClick = { /*showDeleteDialog = false*/ }) {
                     Text("Отмена")
                 }
             }
@@ -257,7 +257,7 @@ fun StatisticsContent(
                 cursor.add(Calendar.DAY_OF_MONTH, 1)
             }
 
-            val lineColor = Color(0xFF26A69A) // бирюзовый, как на макете
+            val lineColor = Color(0xFF26A69A) // бирюзовый цвет для графика
             val areaColor = lineColor.copy(alpha = 0.18f)
 
             item {
