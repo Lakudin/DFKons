@@ -9,7 +9,7 @@ class AuthViewModelFactory(
     private val loginUseCase: LoginUserUseCase,
     private val registerUseCase: RegisterUserUseCase
 ) : ViewModelProvider.Factory {
-
+    // Этот метод вызывается автоматически при создании ViewModel
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(AuthViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")

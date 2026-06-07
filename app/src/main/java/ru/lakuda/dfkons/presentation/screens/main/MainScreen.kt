@@ -6,7 +6,6 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import ru.lakuda.dfkons.di.DependencyInjection
@@ -18,7 +17,6 @@ import ru.lakuda.dfkons.presentation.viewmodels.StatisticsViewModel
 import ru.lakuda.dfkons.presentation.viewmodels.StatisticsViewModelFactory
 import ru.lakuda.dfkons.presentation.viewmodels.TransactionViewModel
 import ru.lakuda.dfkons.presentation.viewmodels.TransactionViewModelFactory
-import androidx.compose.material.icons.filled.PowerSettingsNew
 import androidx.compose.runtime.saveable.rememberSaveable
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -29,10 +27,9 @@ fun MainScreen(
 ) {
     var selectedItem by rememberSaveable { mutableStateOf(0) }
     val currentUser by authViewModel.currentUser.collectAsState()
-    val context = LocalContext.current
 
     val transactionViewModel: TransactionViewModel = viewModel(
-        factory = TransactionViewModelFactory(context)
+        factory = TransactionViewModelFactory()
     )
     val statisticsViewModel: StatisticsViewModel = viewModel(
         factory = StatisticsViewModelFactory(
@@ -68,7 +65,7 @@ fun MainScreen(
                         }
                     }) {
                         Icon(
-                            imageVector = Icons.Default.PowerSettingsNew,
+                            imageVector = Icons.Default.ExitToApp,
                             contentDescription = "Выйти",
                             tint = MaterialTheme.colorScheme.onPrimary
                         )

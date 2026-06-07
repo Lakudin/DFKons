@@ -34,10 +34,10 @@ class CurrencyViewModel : ViewModel() {
         "EUR" to "Евро",
         "CNY" to "Юань",
         "GBP" to "Фунт стерлингов",
-        "JPY" to "Японская иена",
-        "TRY" to "Турецкая лира",
-        "KZT" to "Каз. тенге",
-        "UZS" to "Узбекский сум"
+        "JPY" to "Иена",
+        "TRY" to "Лира",
+        "KZT" to "Тенге",
+        "UZS" to "Сум"
     )
 
     init {

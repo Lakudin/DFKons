@@ -249,6 +249,8 @@ fun PieChart(
     }
 
     val total = data.values.sum()
+    // Фиксируем порядок один раз для диаграммы и легенды
+    val entries = data.entries.toList()
 
     Column(modifier = modifier.fillMaxWidth()) {
         // Круговая диаграмма
@@ -263,7 +265,7 @@ fun PieChart(
 
             var startAngle = -90f // Начинаем с верхней точки
 
-            data.values.forEachIndexed { index, value ->
+            entries.forEachIndexed { index, (_, value) ->
                 val sweepAngle = (value / total).toFloat() * 360f
                 drawArc(
                     color = colors[index % colors.size],
@@ -284,7 +286,7 @@ fun PieChart(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            data.keys.forEachIndexed { index, category ->
+            entries.forEachIndexed { index, (category, value) ->
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -296,7 +298,7 @@ fun PieChart(
                             .background(colors[index % colors.size])
                     )
                     Text(
-                        text = "$category: ${String.format("%.2f", data[category] ?: 0.0)} ₽",
+                        text = "$category: ${String.format("%.2f", value)} ₽",
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }

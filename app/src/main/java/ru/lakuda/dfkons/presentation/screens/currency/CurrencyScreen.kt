@@ -132,7 +132,7 @@ fun CurrencyCard(currency: CurrencyRate) {
 
             Column(horizontalAlignment = Alignment.End) {
                 Text(
-                    text = String.format("1 %s = %.4f ₽", currency.code, currency.rate),
+                    text = String.format("1 %s = %.2f ₽", currency.code, currency.rate),
                     style = MaterialTheme.typography.headlineSmall,
                     color = MaterialTheme.colorScheme.primary
                 )
@@ -144,7 +144,7 @@ fun CurrencyCard(currency: CurrencyRate) {
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = String.format("вчера: %.4f", currency.previousRate),
+                        text = String.format("вчера: %.2f", currency.previousRate),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
