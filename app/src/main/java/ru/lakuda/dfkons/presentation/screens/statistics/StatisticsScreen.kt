@@ -15,11 +15,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.unit.TextUnit
 import kotlinx.coroutines.launch
 import ru.lakuda.dfkons.domain.models.Transaction
 import ru.lakuda.dfkons.domain.models.TransactionType
@@ -31,16 +29,6 @@ import ru.lakuda.dfkons.presentation.viewmodels.StatisticsViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 
-//@Composable
-//fun adaptiveSp(fontSize: Int): TextUnit {
-//    val configuration = LocalConfiguration.current
-//    val screenWidthDp = configuration.screenWidthDp
-//    return when {
-//        screenWidthDp < 360 -> (fontSize - 4).sp
-//        screenWidthDp < 400 -> (fontSize - 2).sp
-//        else -> fontSize.sp
-//    }
-//}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,8 +36,17 @@ fun StatisticsScreen(
     userId: Long,
     viewModel: StatisticsViewModel
 ) {
-    var startDateMillis by rememberSaveable { mutableStateOf<Long?>(null) }
-    var endDateMillis by rememberSaveable { mutableStateOf<Long?>(null) }
+    //дефолтные установки для графика с сегодня и на 2 месяца назад;
+    val defaultEnd = Calendar.getInstance()
+    val defaultStart = Calendar.getInstance().apply {
+        add(Calendar.MONTH, -2)
+    }
+    var startDateMillis by rememberSaveable {
+        mutableStateOf<Long?>(defaultStart.timeInMillis)
+    }
+    var endDateMillis by rememberSaveable {
+        mutableStateOf<Long?>(defaultEnd.timeInMillis)
+    }
     var showStartPicker by rememberSaveable { mutableStateOf(false) }
     var showEndPicker by rememberSaveable { mutableStateOf(false) }
     var showDeleteDialog by rememberSaveable { mutableStateOf(false) }
@@ -68,8 +65,10 @@ fun StatisticsScreen(
         transactions.firstOrNull { it.id == selectedTransactionId }
     }
 
+
+
     LaunchedEffect(Unit) {
-        viewModel.loadStatistics(userId)
+        viewModel.loadStatistics(userId, startDate, endDate)
         viewModel.loadTransactions(userId)
     }
 
@@ -138,27 +137,27 @@ fun StatisticsScreen(
 
     if (showStartPicker) {
         DatePickerDialog(
-            onDismissRequest = { /*showStartPicker = false*/ },
+            onDismissRequest = { showStartPicker = false },
             onDateSelected = { date ->
                 startDateMillis = date.time
-                //showStartPicker = false
+                showStartPicker = false
             }
         )
     }
 
     if (showEndPicker) {
         DatePickerDialog(
-            onDismissRequest = { /*showEndPicker = false*/ },
+            onDismissRequest = { showEndPicker = false },
             onDateSelected = { date ->
                 endDateMillis = date.time
-                //showEndPicker = false
+                showEndPicker = false
             }
         )
     }
 
     if (showDeleteDialog && selectedTransaction != null) {
         AlertDialog(
-            onDismissRequest = { /*showDeleteDialog = false*/ },
+            onDismissRequest = { showDeleteDialog = false },
             title = { Text("Удалить операцию") },
             text = {
                 Text(
@@ -177,7 +176,6 @@ fun StatisticsScreen(
                             snackbarMessage = "Операция удалена"
                             showSnackbar = true
                         }
-                        //showDeleteDialog = false
                         selectedTransactionId = null
                     }
                 ) {
@@ -185,7 +183,7 @@ fun StatisticsScreen(
                 }
             },
             dismissButton = {
-                TextButton(onClick = { /*showDeleteDialog = false*/ }) {
+                TextButton(onClick = { showDeleteDialog = false  }) {
                     Text("Отмена")
                 }
             }
@@ -204,14 +202,14 @@ fun StatisticsContent(
     onApplyFilter: () -> Unit,
     onDeleteTransaction: (Transaction) -> Unit
 ) {
-    val sortedTransactions = transactions.sortedByDescending { it.date }
+    //сортировка транзакций за период
     val filteredForGraph = transactions.filter { tx ->
         var include = true
         startDate?.let { if (tx.date.before(it.atStartOfDay())) include = false }
         endDate?.let { if (tx.date.after(it.atEndOfDay())) include = false }
         include
     }
-    //val errorColor = MaterialTheme.colorScheme.error
+    val sortedTransactions = filteredForGraph.sortedByDescending { it.date }
 
 
     LazyColumn(
@@ -244,7 +242,7 @@ fun StatisticsContent(
                     }
                 }
 
-            var cursor = startCal.clone() as Calendar
+            val cursor = startCal.clone() as Calendar
             var balance = 0.0
             val labels = mutableListOf<String>()
             val points = mutableListOf<Float>()
@@ -306,7 +304,7 @@ fun StatisticsContent(
         if (transactions.isNotEmpty()) {
             item {
                 Text(
-                    text = "Последние операции",
+                    text = "Операции за период",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(bottom = 8.dp)
@@ -474,7 +472,7 @@ fun TopCategoriesCard(topCategories: List<Pair<String, Double>>) {
             Spacer(Modifier.height(12.dp))
 
             topCategories
-                .take(4)
+                .take(5)
                 .forEach { (category, amount) ->
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -591,7 +589,7 @@ fun DatePickerDialog(
 ) {
     val datePickerState = rememberDatePickerState()
 
-    androidx.compose.material3.DatePickerDialog(
+    DatePickerDialog(
         onDismissRequest = onDismissRequest,
         confirmButton = {
             TextButton(
