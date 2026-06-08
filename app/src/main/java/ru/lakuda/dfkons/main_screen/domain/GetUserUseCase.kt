@@ -4,7 +4,7 @@ import ru.lakuda.dfkons.domain.models.User
 
 interface GetUserUseCase {
     // Для поиска по ID (Long)
-//    suspend operator fun invoke(userId: Long): User?
+    // suspend operator fun invoke(userId: Long): User?
 
     // Для поиска по email (String) - перегрузка
     suspend operator fun invoke(email: String): User?
