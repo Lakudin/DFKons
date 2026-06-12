@@ -22,7 +22,9 @@ data class StatisticsData(
     val topExpenseCategories: List<Pair<String, Double>> = emptyList(),
     val transactionsCount: Int = 0,
     val averageDailyExpense: Double = 0.0
+
 )
+
 
 sealed class StatisticsUiState {
     object Loading : StatisticsUiState()
@@ -34,6 +36,19 @@ class StatisticsViewModel(
     private val getTransactionsUseCase: GetTransactionsUseCase,
     private val deleteTransactionUseCase: DeleteTransactionUseCase
 ) : ViewModel() {
+
+    var startDate: Date? = Calendar.getInstance().apply {
+        add(Calendar.MONTH, -2)
+    }.let { Date(it.timeInMillis) }
+        private set
+
+    var endDate: Date? = Date()
+        private set
+
+    fun updateDates(start: Date?, end: Date?) {
+        startDate = start
+        endDate = end
+    }
 
     private val _uiState = MutableStateFlow<StatisticsUiState>(StatisticsUiState.Loading)
     val uiState = _uiState.asStateFlow()

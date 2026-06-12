@@ -37,22 +37,14 @@ fun StatisticsScreen(
     viewModel: StatisticsViewModel
 ) {
     //дефолтные установки для графика с сегодня и на 2 месяца назад;
-    val defaultEnd = Calendar.getInstance()
-    val defaultStart = Calendar.getInstance().apply {
-        add(Calendar.MONTH, -2)
-    }
-    var startDateMillis by rememberSaveable {
-        mutableStateOf<Long?>(defaultStart.timeInMillis)
-    }
-    var endDateMillis by rememberSaveable {
-        mutableStateOf<Long?>(defaultEnd.timeInMillis)
-    }
     var showStartPicker by rememberSaveable { mutableStateOf(false) }
     var showEndPicker by rememberSaveable { mutableStateOf(false) }
     var showDeleteDialog by rememberSaveable { mutableStateOf(false) }
     var selectedTransactionId by rememberSaveable { mutableStateOf<Long?>(null) }
-    val startDate = remember(startDateMillis) { startDateMillis?.let { Date(it) } }
-    val endDate = remember(endDateMillis) { endDateMillis?.let { Date(it) } }
+    var startDateMillis by remember { mutableStateOf(viewModel.startDate?.time) }
+    var endDateMillis by remember { mutableStateOf(viewModel.endDate?.time) }
+    val startDate by remember(startDateMillis) { derivedStateOf { startDateMillis?.let { Date(it) } } }
+    val endDate by remember(endDateMillis) { derivedStateOf { endDateMillis?.let { Date(it) } } }
 
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
@@ -140,6 +132,7 @@ fun StatisticsScreen(
             onDismissRequest = { showStartPicker = false },
             onDateSelected = { date ->
                 startDateMillis = date.time
+                viewModel.updateDates(Date(date.time), endDate)
                 showStartPicker = false
             }
         )
@@ -150,6 +143,7 @@ fun StatisticsScreen(
             onDismissRequest = { showEndPicker = false },
             onDateSelected = { date ->
                 endDateMillis = date.time
+                viewModel.updateDates(startDate, Date(date.time))
                 showEndPicker = false
             }
         )
